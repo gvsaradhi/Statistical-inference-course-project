@@ -1,0 +1,107 @@
+---
+title: Central Limit Theorem - Exponential Distribution
+output: pdf_document
+author: Vijay (VIJAYASARADHI GANNAVARAM)
+---
+========================================================
+
+
+
+## Overview
+- In this document, we investigate the exponential distribution in R and compare it with the Central Limit Theorem.
+- For this we perform a simulation study in which we investigate the distribution of averages of 40 exponentials and show that the distribution is approximately normal (central limit theorem)
+- The exponential distribution can be simulated in R with rexp(n,lambda), where lambda is the rate parameter and n is the number of samples.
+- The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda.
+- For the simulation study conduct, we will set lambda = 0.2 for all of the simulations.
+
+## Simulations
+- We intend to perform 1000 simulations or draws. 
+- In each simulation we draw a sample of size 40 from the exponential distribution.
+- First we create the input variables necessary for the simulation.
+
+```{r}
+num_sim= 1000 #number of draws/simulations
+n=40 #number of samples
+lambda=0.2 #lambda for exponential distribution
+```
+
+- Next, we genearte the data using the rexp function. 
+```{r}
+exponential_data= rexp(num_sim * n, lambda)
+```
+
+- This creates a data of length `r num_sim*n` from exponential distribution with rate parameter lambda=`r lambda`
+
+- We will draw samples of size 40 from the generated data and organize it as a matrix of size 1000 x 40, where each row corresponds to one draw.
+```{r}
+M= matrix(exponential_data,num_sim)
+```
+
+- Next, we generate data to investigate distribution of averages of 40 exponentials.
+
+```{r}
+M= matrix(exponential_data,num_sim) #arranges data as 1000 rows and 40 columns
+MeanM= apply(M,1,mean) #gives 1000 means, by taking mean of 10 columns for each row
+```
+
+
+
+## Sample Mean versus Theoretical Mean
+- We compute the theoretical Mean using the formula and compare it with the sample mean.
+- By definition the theoretical Mean is `1/lambda`
+- The sample mean can be obtained by taking the mean of averages genearted above.
+
+```{r}
+theoretical_mean= 1/lambda
+sample_mean= mean(MeanM)
+
+theoretical_mean
+
+sample_mean
+
+```
+
+- We observe that **theoretical mean is `r theoretical_mean`** and **sample mean is `r sample_mean`** and they are almost equal.
+
+## Sample Variance versus Theoretical Variance: 
+
+- We compute the theoretical variance using formula and compare it with the computed sample variance.
+- By definition, theoretical variance for distribution of means is $\sigma^2/n$, which is $1/lambda^2 n$
+- Sample variance can be obtained by computing the variance of the sample means generated above
+
+```{r}
+theoretical_std_deviation= 1/lambda
+theoretical_variance= (theoretical_std_deviation^2)/n # this should be sigma^2/sqrt(n)
+sample_variance= var(MeanM) 
+
+theoretical_variance
+sample_variance
+
+```
+
+## Distribution
+
+By Central Limit theorem, if as n becomes large, the distribution of the means should be approximately normal with mean $\mu$ and standard deviation $\sigma/\sqrt n$
+
+We already observed that the mean of the distribution of means is approximately equal to population mean \mu, as shown in the histogram below. The shape of the histogram also shows that the distribution is approximately normal.
+```{r }
+
+hist(MeanM)
+abline(v = sample_mean, col = "blue", lwd = 10)
+```
+
+- To check this, we compute the standard error and see if it equals the standard deviation of the distribution of means
+```{r}
+
+standard_error= theoretical_std_deviation/sqrt(n)
+sd_MeanM= sd(MeanM)
+
+standard_error
+
+sd_MeanM
+```
+
+
+
+
+
